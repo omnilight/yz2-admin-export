@@ -3,6 +3,10 @@
 namespace yz\admin\export\common\models;
 
 use Yii;
+use yii\base\ModelEvent;
+use yii\behaviors\TimestampBehavior;
+use yii\db\BaseActiveRecord;
+use yii\db\Expression;
 use yii\helpers\Json;
 use yz\admin\models\User;
 use yz\interfaces\ModelInfoInterface;
@@ -18,6 +22,8 @@ use yz\interfaces\ModelInfoInterface;
  * @property string $file
  * @property integer $is_exported
  * @property string $exported_at
+ * 
+ * @property array $data
  *
  * @property User $user
  */
@@ -48,6 +54,17 @@ class ExportRequest extends \yz\db\ActiveRecord implements ModelInfoInterface
     {
         return Yii::t('admin/export', 'Export Requests');
     }
+
+    public function behaviors()
+    {
+        return [
+            'timestamp' => [
+                'class' => TimestampBehavior::className(),
+                'value' => new Expression('NOW()'),
+            ],
+        ];
+    }
+
 
     /**
      * @inheritdoc
@@ -102,4 +119,12 @@ class ExportRequest extends \yz\db\ActiveRecord implements ModelInfoInterface
     {
         $this->data_raw = Json::encode($data);
     }
+
+    public function beforeSave($insert)
+    {
+
+        return parent::beforeSave($insert);
+    }
+
+
 }

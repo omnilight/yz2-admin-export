@@ -5,6 +5,7 @@ use yii\base\Action;
 use Yii;
 use yii\data\DataProviderInterface;
 use yii\web\Controller;
+use yz\admin\export\common\models\ExportRequest;
 use yz\admin\widgets\GridView;
 use yz\Yz;
 
@@ -24,6 +25,11 @@ class ExportAction extends \yz\admin\actions\ExportAction
             'actionId' => $this->id,
             'params' => Yii::$app->request->getQueryParams(),
         ];
+
+        $exportRequest = new ExportRequest();
+        $exportRequest->user_id = Yii::$app->user->id;
+        $exportRequest->data = $data;
+        $exportRequest->save();
 
         Yii::$app->session->setFlash(Yz::FLASH_INFO, Yii::t('admin/export','Export request was added to queue. System will notify you when it will be done'));
 
