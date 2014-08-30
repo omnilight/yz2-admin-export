@@ -24,11 +24,14 @@ use yz\interfaces\ModelInfoInterface;
  * @property string $exported_at
  * 
  * @property array $data
+ * @property string $fullFileName Returns path alias for the file
  *
  * @property User $user
  */
 class ExportRequest extends \yz\db\ActiveRecord implements ModelInfoInterface
 {
+    const FILE_PATH = '@backend/runtime/admin-export';
+
     /**
      * @inheritdoc
      */
@@ -122,9 +125,21 @@ class ExportRequest extends \yz\db\ActiveRecord implements ModelInfoInterface
 
     public function beforeSave($insert)
     {
-
+        if ($this->is_exported == 1 && $this->isAttributeChanged('is_exported')) {
+            $this->exported_at = new Expression('NOW()');
+        }
         return parent::beforeSave($insert);
     }
 
+    public function afterDelete()
+    {
+        @unlink(Yii::getAlias($this->fullFileName));
+        parent::afterDelete();
+    }
 
+
+    public function getFullFileName()
+    {
+        return self::FILE_PATH . '/' . $this->file;
+    }
 }

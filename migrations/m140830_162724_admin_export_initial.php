@@ -19,7 +19,7 @@ class m140830_162724_admin_export_initial extends Migration
             'created_at' => Schema::TYPE_DATETIME,
             'updated_at' => Schema::TYPE_DATETIME,
             'file' => Schema::TYPE_STRING,
-            'is_exported' => Schema::TYPE_BOOLEAN,
+            'is_exported' => Schema::TYPE_BOOLEAN.' DEFAULT 0',
             'exported_at' => Schema::TYPE_DATETIME,
             'FOREIGN KEY (user_id) REFERENCES {{%admin_users}} (id) ON DELETE CASCADE ON UPDATE CASCADE',
         ], $tableOptions);
@@ -27,8 +27,6 @@ class m140830_162724_admin_export_initial extends Migration
 
     public function down()
     {
-        echo "m140830_162724_admin_export_initial cannot be reverted.\n";
-
-        return false;
+        $this->dropTable('{{%admin_export_requests}}');
     }
 }
