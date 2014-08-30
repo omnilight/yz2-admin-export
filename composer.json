@@ -1,0 +1,27 @@
+{
+    "name": "omnilight/yz2-admin-export",
+    "description": "Module provides background exporting data for yzAdmin",
+    "keywords": ["yii", "framework", "yz", "administration panel","export"],
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Pavel Agalecky",
+            "email": "pavel.agalecky@gmail.com"
+        }
+    ],
+    "type": "yii2-extension",
+    "require": {
+        "php": ">=5.4.0",
+        "yiisoft/yii2": "*",
+        "yiisoft/yii2-bootstrap": "*",
+        "omnilight/icons": "*",
+        "omnilight/yz2": "*",
+        "omnilight/yz2-admin": "*"
+    },
+    "autoload": {
+        "psr-4": { "yz\\admin\\export\\": "" }
+    },
+    "extra": {
+        "bootstrap": "yz\\admin\\export\\Bootstrap"
+    }
+}
