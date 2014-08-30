@@ -38,7 +38,11 @@ class ExportController extends Controller
         try {
             foreach ($requestsQuery->each() as $exportRequest) {
                 /** @var ExportRequest $exportRequest */
+                echo "[#".$exportRequest->id.": ".$exportRequest->created_at."] - ...";
                 $this->processExportRequest($exportRequest);
+                $memoryPeak = round(memory_get_peak_usage() / 1024 / 1024,2);
+                $memory = round(memory_get_usage() / 1024 / 1024,2);
+                echo "\r[#".$exportRequest->id.": ".$exportRequest->created_at."] [Mem: {$memoryPeak}Mb/{$memory}Mb] - Success!\n";
             }
         } catch (\Exception $e) {
             $mutex->release(self::LOCK_NAME);
@@ -48,6 +52,20 @@ class ExportController extends Controller
         $mutex->release(self::LOCK_NAME);
 
         return self::EXIT_CODE_NORMAL;
+    }
+
+    public function actionList()
+    {
+        Console::output("Currently waiting exports:");
+
+        /** @var ActiveQuery $exportRequests */
+        $requestsQuery = ExportRequest::find()
+            ->where(['is_exported' => 0])->orderBy(['created_at' => SORT_ASC]);
+
+        foreach ($requestsQuery->each() as $exportRequest) {
+            /** @var ExportRequest $exportRequest */
+            Console::output("[#".$exportRequest->id.": ".$exportRequest->created_at."] - ".$exportRequest->data_raw);
+        }
     }
 
     /**

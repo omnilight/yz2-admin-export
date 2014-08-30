@@ -4,6 +4,7 @@ namespace yz\admin\export\common\actions;
 use yii\base\Action;
 use Yii;
 use yii\data\DataProviderInterface;
+use yii\helpers\Json;
 use yii\web\Controller;
 use yz\admin\export\common\models\ExportRequest;
 use yz\admin\widgets\GridView;
@@ -29,7 +30,8 @@ class ExportAction extends \yz\admin\actions\ExportAction
         $exportRequest = new ExportRequest();
         $exportRequest->user_id = Yii::$app->user->id;
         $exportRequest->data = $data;
-        $exportRequest->save();
+        if ($exportRequest->save() == false)
+            Yz::errorFlash(Json::encode($exportRequest->getFirstErrors()));
 
         Yii::$app->session->setFlash(Yz::FLASH_INFO, Yii::t('admin/export','Export request was added to queue. System will notify you when it will be done'));
 
