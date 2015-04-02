@@ -77,7 +77,8 @@ class ExportRequest extends \yz\db\ActiveRecord implements ModelInfoInterface
         return [
             [['user_id', 'is_exported'], 'integer'],
             [['created_at', 'updated_at', 'exported_at'], 'safe'],
-            [['data_raw', 'file'], 'string', 'max' => 255]
+            [['file'], 'string', 'max' => 255],
+            ['data_raw', 'string'],
         ];
     }
 
