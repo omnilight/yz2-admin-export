@@ -23,5 +23,14 @@ class Bootstrap implements BootstrapInterface
             'basePath' => '@yz/admin/export/common/messages',
             'sourceLanguage' => 'en-US',
         ];
+
+        if ($app instanceof \yii\console\Application) {
+            if ($app->has('schedule')) {
+                /** @var omnilight\scheduling\Schedule $schedule */
+                $schedule = $app->get('schedule');
+                // Place all your shedule command below
+                $schedule->command('admin-export/export/process');
+            }
+        }
     }
 }

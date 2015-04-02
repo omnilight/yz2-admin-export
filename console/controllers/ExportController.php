@@ -84,10 +84,15 @@ class ExportController extends Controller
         if (!(is_a($action, ExportAction::className())))
             return false;
 
+        if (is_callable($action->searchModel)) {
+            $searchModel = call_user_func($action->searchModel, $requestParams);
+        } else {
+            $searchModel = $action->searchModel;
+        }
         /** @var DataProviderInterface $dataProvider */
-        $dataProvider = call_user_func($action->dataProvider, $requestParams);
+        $dataProvider = call_user_func($action->dataProvider, $requestParams, $searchModel);
         /** @var array $gridColumns */
-        $gridColumns = call_user_func($action->getGridColumns());
+        $gridColumns = call_user_func($action->getGridColumns(), $searchModel, $dataProvider, $requestParams);
 
         $grid = GridView::widget([
             'renderAllPages' => true,
