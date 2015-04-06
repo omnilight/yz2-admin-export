@@ -65,7 +65,9 @@ class ExportRequestsController extends Controller
     {
         $model = $this->findModel($id);
 
-        return Yii::$app->response->sendFile(Yii::getAlias($model->fullFileName), $model->file, 'application/msexcel');
+        return Yii::$app->response->sendFile(Yii::getAlias($model->fullFileName), $model->file, [
+            'mimeType' => 'application/msexcel',
+        ]);
     }
 
 
