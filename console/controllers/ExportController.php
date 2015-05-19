@@ -100,7 +100,7 @@ class ExportController extends Controller
         /** @var array $gridColumns */
         $gridColumns = call_user_func($action->getGridColumns(), $searchModel, $dataProvider, $requestParams);
 
-        $grid = GridView::begin([
+        $exportedContent = GridView::widget([
             'renderAllPages' => true,
             'runInConsoleMode' => true,
             'layout' => "{items}",
@@ -108,17 +108,10 @@ class ExportController extends Controller
             'dataProvider' => $dataProvider,
             'columns' => $gridColumns,
         ]);
-        $grid->on(GridView::EVENT_AFTER_RENDER_PAGE, function (Event $event) use ($request) {
-            /** @var GridView $grid */
-            $grid = $event->sender;
-            echo "\r[#".$request->id.": ".$request->created_at."] - ... ";
-            echo " page ".$grid->dataProvider->getPagination()->page."/".$grid->dataProvider->getPagination()->pageCount;
-        });
-        $grid->end();
 
         $fileContent = strtr(ExportAction::EXPORT_TEMPLATE, [
             '{name}' => $action->reportName,
-            '{grid}' => $grid,
+            '{grid}' => $exportedContent,
         ]);
 
         $fileName = 'Export_' . $request->id . '_' . strtotime('%d%m%Y%H%i%s') . '.xls';
