@@ -4,6 +4,7 @@ namespace yz\admin\export\console\controllers;
 
 use console\base\Controller;
 use Yii;
+use yii\base\Event;
 use yii\data\DataProviderInterface;
 use yii\db\ActiveQuery;
 use yii\helpers\Console;
@@ -68,6 +69,11 @@ class ExportController extends Controller
         }
     }
 
+    public function actionClear()
+    {
+        ExportRequest::deleteAll(['is_exported' => 0]);
+    }
+
     /**
      * @param ExportRequest $request
      * @return bool
@@ -94,7 +100,7 @@ class ExportController extends Controller
         /** @var array $gridColumns */
         $gridColumns = call_user_func($action->getGridColumns(), $searchModel, $dataProvider, $requestParams);
 
-        $grid = GridView::widget([
+        $grid = GridView::begin([
             'renderAllPages' => true,
             'runInConsoleMode' => true,
             'layout' => "{items}",
@@ -102,6 +108,13 @@ class ExportController extends Controller
             'dataProvider' => $dataProvider,
             'columns' => $gridColumns,
         ]);
+        $grid->on(GridView::EVENT_AFTER_RENDER_PAGE, function (Event $event) use ($request) {
+            /** @var GridView $grid */
+            $grid = $event->sender;
+            echo "\r[#".$request->id.": ".$request->created_at."] - ... ";
+            echo " page ".$grid->dataProvider->getPagination()->page."/".$grid->dataProvider->getPagination()->pageCount;
+        });
+        $grid->end();
 
         $fileContent = strtr(ExportAction::EXPORT_TEMPLATE, [
             '{name}' => $action->reportName,
