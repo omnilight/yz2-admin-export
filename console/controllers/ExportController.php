@@ -12,8 +12,8 @@ use yii\helpers\FileHelper;
 use yii\mutex\FileMutex;
 use yz\admin\export\common\actions\ExportAction;
 use yz\admin\export\common\models\ExportRequest;
+use yz\admin\grid\GridView;
 use yz\admin\models\SystemEvent;
-use yz\admin\widgets\GridView;
 
 
 /**
