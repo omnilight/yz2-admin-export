@@ -69,9 +69,15 @@ class ExportController extends Controller
         }
     }
 
-    public function actionClear()
+    public function actionClear($id = null)
     {
-        ExportRequest::deleteAll(['is_exported' => 0]);
+        $params = [
+            'is_exported' => 0,
+        ];
+        if ($id !== null) {
+            $params['id'] = $id;
+        }
+        ExportRequest::deleteAll($params);
     }
 
     /**
