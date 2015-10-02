@@ -5,6 +5,7 @@ namespace yz\admin\export\console\controllers;
 use console\base\Controller;
 use Yii;
 use yii\base\Event;
+use yii\base\Exception;
 use yii\data\DataProviderInterface;
 use yii\db\ActiveQuery;
 use yii\helpers\Console;
@@ -106,14 +107,22 @@ class ExportController extends Controller
         /** @var array $gridColumns */
         $gridColumns = call_user_func($action->getGridColumns(), $searchModel, $dataProvider, $requestParams);
 
-        $exportedContent = GridView::widget([
-            'renderAllPages' => true,
-            'runInConsoleMode' => true,
-            'layout' => "{items}",
-            'tableOptions' => ['class' => ''],
-            'dataProvider' => $dataProvider,
-            'columns' => $gridColumns,
-        ]);
+        try {
+            $exportedContent = GridView::widget([
+                'renderAllPages' => true,
+                'runInConsoleMode' => true,
+                'layout' => "{items}",
+                'tableOptions' => ['class' => ''],
+                'dataProvider' => $dataProvider,
+                'columns' => $gridColumns,
+            ]);
+        } catch (Exception $e) {
+
+            $request->delete();
+            SystemEvent::create('error', $request->user_id, Yii::t('admin/export','Requested data was not exported, aborting'));
+
+            return false;
+        }
 
         $fileContent = strtr(ExportAction::EXPORT_TEMPLATE, [
             '{name}' => $action->reportName,
